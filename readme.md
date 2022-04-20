@@ -223,7 +223,7 @@ df_print = pd.DataFrame({"合計時間":pred_print_work,"付帯時間":pred_prin
 submit.to_csv("submit.csv",index=None,header=False)
 ```
 # Note  
-本課題は、課題内容の理解に苦しんだ  
+本課題は、内容の理解に苦しんだ  
 課題内容を理解するために印刷して下線を引きながら何度も読みかえしたことを覚えている  
 また、学習データ評価データどちらも欠損値・異常値が多すぎる・・・あまりにも汚い    
 
