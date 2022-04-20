@@ -127,6 +127,7 @@ Befor ⇒　After
  <img src="https://user-images.githubusercontent.com/93046615/164148015-86f26926-7fbe-45fd-94bb-e77abaf93a6b.png" width="300px"> <img src="https://user-images.githubusercontent.com/93046615/164148134-3f0963a3-de51-43e2-8331-d60bca8964b0.png" width="300px">
 
 ### 4.グルアーと 印刷機（2, 4, 6, 7, 8号機)に分けるて欠損値穴埋め（中央値・0埋め)
+グルアーと印刷機でデータを分割してそれぞれ異なる前処理を行う  
 ```bash
 gruar = df[df["号機名"] == "グルアー"]
 print = df[df["号機名"] != "グルアー"]
@@ -136,6 +137,7 @@ print = df[df["号機名"] != "グルアー"]
 gruar = pd.get_dummies(gruar)
 ```
 ### 6.目的変数と説明変数に分ける  
+モデルは4つ作成するため、8個のXYを作成  
 ```bash
 x_gruar_work = train_gruar.drop(["作業時間","付帯時間"],axis=1)
 x_gruar_hutai = train_gruar.drop(["付帯時間"],axis=1)
@@ -148,11 +150,13 @@ y_print_work = train_print["作業時間"]
 y_print_hutai = train_print["付帯時間"]
 ```
 ### 7.学習データと評価データの作成
+train_test_splitでデータの分割（8:2)
 ```bash
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=TEST_SIZE,random_state=RANDOM_STATE)
 x_train,x_valid,y_train,y_valid = train_test_split(x_train,y_train,test_size=TEST_SIZE,random_state=RANDOM_STATE)
 ```
 ### 8.パラメータチューニング  
+最適なパラメータを調べる  
 ```bash
     params = {
         'objective': 'mean_squared_error',
@@ -174,6 +178,10 @@ x_train,x_valid,y_train,y_valid = train_test_split(x_train,y_train,test_size=TES
     best_params = gbm.params
 ```
 ### 9.評価
+評価して値を取得
+評価指標はR2 MAE MSE RMSE を取得
+今回の課題は慢性的に誤差を減らしたいためRMSEを重要視する  
+<img src="https://user-images.githubusercontent.com/93046615/164150947-fb9f108a-e8f2-42d7-9fe4-8a6860d8bce3.png" width="600px">
 ```bash
     # 評価
     def calculate_scores(true, pred):
@@ -198,9 +206,8 @@ x_train,x_valid,y_train,y_valid = train_test_split(x_train,y_train,test_size=TES
         return scores
 ```
 ### 10.importanceの確認
-
-<img src="https://user-images.githubusercontent.com/93046615/164149893-ee5cb1cc-2cd3-4cac-b475-22ce4c6165cf.png" width="200px">
-<img src="https://user-images.githubusercontent.com/93046615/164149910-d827f719-dfe3-4d5e-a5a8-22ba6e08d155.png" width="200px">
+importanceを確認して不要な特徴量がないか調べる  
+<img src="https://user-images.githubusercontent.com/93046615/164149893-ee5cb1cc-2cd3-4cac-b475-22ce4c6165cf.png" width="200px"><img src="https://user-images.githubusercontent.com/93046615/164149910-d827f719-dfe3-4d5e-a5a8-22ba6e08d155.png" width="200px">
 
 ### 11.テストデータで評価
 ```bash
@@ -215,3 +222,24 @@ df_print = pd.DataFrame({"合計時間":pred_print_work,"付帯時間":pred_prin
 ```bash
 submit.to_csv("submit.csv",index=None,header=False)
 ```
+# Note  
+本課題は、課題内容の理解に苦しんだ  
+課題内容を理解するために印刷して下線を引きながら何度も読みかえしたことを覚えている  
+また、学習データ評価データどちらも欠損値・異常値が多すぎる・・・あまりにも汚い    
+
+コンペ優勝者も私と同様４つのモデルを作成していたが前処理の手法が全くことなっていた  
+今回の一番の収穫は前処理の大事さを知れたことだ。  
+パラメータチューニングやアンサンブル学習なんかよりも前処理が命  
+とにかく前処理！！ひたすら前処理！！  
+
+コンペの結果は42位/326  
+プレゼン資料を含めた総合順位では16位になった  
+
+# Author
+
+* 作成者 KeiichiAdachi
+* 所属 Japan/Aichi
+* E-mail keiichimonoo@gmail.com
+ 
+# License
+なし  
